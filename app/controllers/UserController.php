@@ -193,7 +193,7 @@ public function p5_ex_resetPassword()
             # Create a secure token
             $token = bin2hex(random_bytes(32));
 
-            $message = "cliquez sur le lien suivant : <a href='http://192.168.1.106/zewiki/resetPassword?token=" . urlencode($token) . "'>Réinitialiser mot de passe</a>";
+            $message = "cliquez sur le lien suivant : <a href='https://zewiki.fr/resetPassword?token=" . urlencode($token) . "'>Réinitialiser mot de passe</a>";
             $subject = 'Réinitialisation de votre mot de passe';
 
             # Save token, email in database
@@ -288,25 +288,28 @@ public function p5_ex_resetPassword()
         
         $databasemanager = new DatabaseManager;
         
-        # Get token from url
-        $token = $_GET['token'];
+        # Verify token exists (page from link) or not page from connexion with non activated account
 
-        # Active user from token
-        $result = $databasemanager->activeAccountByToken($token);
-
-        if($result)
+        if(isset($_GET['token']))
         {
-            # Redirect to welcome page for authentication
-            $this->redirectTo('welcome');
+            # Get token from url
+            $token = $_GET['token'];
 
+            # Active user from token
+            $activation = $databasemanager->activeAccountByToken($token);
+
+            if($activation)
+            {
+                # Redirect to welcome page for authentication
+                $this->redirectTo('welcome');
+            }
         }
-        else
-        {
-            # Account not activated show activeAccount
-            # Set datas in $datas array
-            $datas['p2_view'] = 'p2_base.php';
-            $datas['p3_view'] = 'p3_base.php';
-            $datas['p5_view'] = 'p5_activeAccount.php';
+        
+        # No token or no activation
+        # Set datas in $datas array
+        $datas['p2_view'] = 'p2_base.php';
+        $datas['p3_view'] = 'p3_base.php';
+        $datas['p5_view'] = 'p5_activeAccount.php';
 
         # add vars to template and call template
         $this->render($datas);    
@@ -500,7 +503,7 @@ public function p5_ex_resetPassword()
                 $token = bin2hex(random_bytes(32));
                 
                 # Message creation 
-                $message = "cliquez sur le lien suivant : <a href='http://192.168.1.106/zewiki/p5-ex-activeAccount?token=" . urlencode($token) . "'>Activer votre compte</a>";
+                $message = "cliquez sur le lien suivant : <a href='http://zewiki.fr/p5-ex-activeAccount?token=" . urlencode($token) . "'>Activer votre compte</a>";
                 $subject = 'Activation de votre compte Zewiki';
                 # Save token in Database, and send email with the token
                 $result = $this->sendSecureToken('activation_account',$email,$message,$subject,$token);
