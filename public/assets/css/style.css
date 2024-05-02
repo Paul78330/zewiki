@@ -1,0 +1,59 @@
+/* style spécifique a la liste des dossiers */
+
+#folders_list{
+  margin: 0;
+  padding: 0;
+  font-size: small;
+  text-align: left;
+  overflow: auto;
+}
+
+#origin{
+  padding-left: 0;
+}
+
+
+/* Masquage des puces par défaut et des checkboxs */
+ul{
+  list-style: none;
+}
+
+a{
+  color:black;
+}
+a:link { 
+  text-decoration: none;
+  
+}
+input[type=checkbox]{
+  display: none;
+}
+/* changement du curseur sur les labels pour pouvoir cliquer sur les checkboxs qui sont cachées */
+
+label:hover{
+  cursor: pointer;
+}
+
+
+/* affiche ou masque les elements en fonction de leurs classes */
+.closed > ul{
+ display: none;
+}
+
+/* Ajout des icones devant les dossiers ou fichiers */
+
+.empty::before{
+  content: 	'\01F4C1';
+}
+
+
+.open::before{
+  content: 	'\01F892 \01F4C2';
+}
+.closed::before{
+  content: 	'\002b \01F4C1';
+}
+
+.document::before{
+  content: 	'\01F4D8' ; 
+}
