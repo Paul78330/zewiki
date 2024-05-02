@@ -48,7 +48,7 @@ class DisplayController
         </div>
         <div class='toast-body'>" . $message . "</div>
         </div>
-        <p> Vous allez être redirigé vers www.google.fr dans <span id='compteur'>10</span> secondes </p> 
+        <p> Vous allez être redirigé vers ". $url . " dans <span id='compteur'>10</span> secondes </p> 
         ";
         return $toast;
     }
@@ -67,7 +67,7 @@ class DisplayController
         </div>
       </div>
       <br>
-      <p> Vous allez être redirigé vers www.google.fr dans <span id='compteur'>10</span> secondes </p> 
+      <p> Vous allez être redirigé vers ". $url . " dans <span id='compteur'>10</span> secondes </p> 
         ";
         return $toast;
     }
