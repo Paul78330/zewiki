@@ -78,6 +78,8 @@ class UserController extends AbstractController{
     # User clicked on connexion button from form connexion
     public function p5_ex_connection()
     {
+        # Create DatabaseManager object to access database
+        $databasemanager = new DatabaseManager();
         # Clean input from form
         $email =  InputController::cleanInput($_POST["email"]);
         $password =  InputController::cleanInput($_POST["password"]);
@@ -103,19 +105,28 @@ class UserController extends AbstractController{
             $this->redirectTo('p1-sf-connection');
         }
 
+        # Verfiy account exists in Database
+        $accountExists= $databasemanager->getUserByEmail($email);
+        if($accountExists)
+        {
+            $_SESSION['alert']['message'] = "Adresse e-mail inconnue";
+            # Recall the form
+            $this->redirectTo('p1-sf-connection');
+        }
+
         # Verify if account is activated
-        $databasemanager = new DatabaseManager();
-        $result = $databasemanager->is_active($email);
         
-        if(!$result){
+        $isActive = $databasemanager->is_active($email);
+        
+        if(!$isActive){
             $_SESSION['alert']['message'] = "Votre compte n'est pas activé";
             # Call Send activation code form
             $this->redirectTo('p5-sf-activeAccount');
         }
 
         # Fields ok account activated : verify password from database
-        $result = $databasemanager->verifyPassword($email,$password);
-        if ($result == false){
+        $validPassword = $databasemanager->verifyPassword($email,$password);
+        if ($validPassword == false){
             # email or password wrong : back to connection
             $_SESSION['alert']['message'] = "Informations d'identifications incorrectes";
             # Recall the form
