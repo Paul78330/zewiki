@@ -107,7 +107,7 @@ class UserController extends AbstractController{
 
         # Verfiy account exists in Database
         $accountExists= $databasemanager->getUserByEmail($email);
-        if($accountExists)
+        if(!$accountExists)
         {
             $_SESSION['alert']['message'] = "Adresse e-mail inconnue";
             # Recall the form
