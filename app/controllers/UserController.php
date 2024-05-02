@@ -284,10 +284,12 @@ public function p5_ex_resetPassword()
     }
     
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    public function p5_ex_activeAccount(){
-        
+    public function p5_ex_activeAccount()
+    {
+       
         $databasemanager = new DatabaseManager;
-        
+
+        # case function called from url with token 
         # Verify token exists (page from link) or not page from connexion with non activated account
 
         if(isset($_GET['token']))
@@ -304,17 +306,71 @@ public function p5_ex_resetPassword()
                 $this->redirectTo('welcome');
             }
         }
-        
-        # No token or no activation
-        # Set datas in $datas array
-        $datas['p2_view'] = 'p2_base.php';
-        $datas['p3_view'] = 'p3_base.php';
-        $datas['p5_view'] = 'p5_activeAccount.php';
 
-        # add vars to template and call template
-        $this->render($datas);    
+        # Case function call from form 
+      
+        # Clean input from form
+        $email =  InputController::cleanInput($_POST["email"]);
 
+        # Verfify email field exists from form
+        if($email == false)
+        {
+            $_SESSION['alert']['message']= "Adresse e-mail vide";
         }
+
+        # Verfiy account exists in Database
+        $accountExists= $databasemanager->getUserByEmail($email);
+        if(!$accountExists)
+        {
+            $_SESSION['alert']['message'] = "Adresse e-mail inconnue";
+            # Recall the form
+            $this->redirectTo('p5-ex-activeAccount');
+        }
+
+        # Send e-mail to activeAccount
+
+        # Create a secure token for account activation
+        $token = bin2hex(random_bytes(32));
+
+        # Message creation 
+        $message = "cliquez sur le lien suivant : <a href='http://zewiki.fr/p5-ex-activeAccount?token=" . urlencode($token) . "'>Activer votre compte</a>";
+        $subject = 'Activation de votre compte Zewiki';
+        # Save token in Database, and send email with the token
+        $envoi = $this->sendSecureToken('activation_account',$email,$message,$subject,$token);
+
+        if($envoi)
+        {
+            # Create toast message : 
+            $toast = DisplayController::creerRedirectToast("Activation","Un message d'activation vous a été envoyé, cliquez dessus pour activer votre compte puis connectez-vous.",'welcome');
+
+            # Set datas in $datas array
+            $datas['p2_view'] = 'p2_base.php';
+            $datas['p3_view'] = 'p3_base.php';
+            $datas['p5_view'] = 'p5_register.php';
+            # show toast message and redirect to the welcome page (p5_register.php toast datas-)
+            $datas['toast']  = $toast;
+            
+            # add vars to template and call template
+            $this->render($datas);
+        }
+        else
+        {
+            $_SESSION['alert']['message'] = "Une erreur s'est produite lors de l'envoi de l'e-mail, veuillez réessayer ulterieurement. ";
+            $this->redirectTo("p1-sf-connection");
+        }
+
+
+
+
+
+
+
+
+
+
+
+    
+        
         
     }
 
