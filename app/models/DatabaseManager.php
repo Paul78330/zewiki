@@ -395,9 +395,30 @@ class DatabaseManager{
     }
 
 
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    public function getUserIdFromSource(string $source):int
+    {
+        switch($source)
+        {
+            
+            case 'home' :
+                return ($_SESSION['user'])->getId();
+
+            case 'common':
+                return 2;
+
+            case 'shares':
+                return 3;
+        }
+    }
+
+    
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # Delete document by Id from database
-    public function deleteDocumentById(int $documentId,$source):bool{
+    public function deleteDocumentById(int $documentId,$documentSource):bool{
+
+        $source = $this->getUserIdFromSource($documentSource);
 
         try
         {
@@ -469,6 +490,27 @@ class DatabaseManager{
     # Delete folder by Id from database
     public function deleteFolderById(int $folderId,$source):bool{
 
+        # Verify the folder is empty (no documents, or no subfolder)
+
+        try
+        {
+            # Prepared Statements get right_edge from folder
+            $statement = $this->pdo->prepare("SELECT (folder_right_edge - folder_left_edge) AS size FROM folders WHERE folder_id = ?;");
+            
+            # Statement execution with params
+            $statement->execute([$folderId]);
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
+            if ($result['size'] > 1){
+                return false;
+            }
+            
+        }
+        catch(PDOException $e)
+        {
+            echo "Get size folder before delete error : " . $e->getMessage();
+            exit();
+        }
+
         try
         {
             # Prepared Statements get right_edge from folder
@@ -534,8 +576,26 @@ class DatabaseManager{
     }
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    # Return document infos from document_id
-    public function getDocumentById($documentId)
+    # Delete folder by Id from database
+    public function renameFolder($folderId,$newFolderName):bool
+    {
+        try
+        {
+            $statement = $this->pdo->prepare("update folders set folder_name = ? where folder_id = ?");
+            $result = $statement->execute([$newFolderName,$folderId]);
+
+        }
+        catch(PDOException $e)
+        {
+            echo " renameFolder  erreur : " . $e->getMessage();
+            exit();
+        }
+        return $result;
+    }
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Return document content from document_id
+    public function getDocumentContentById(int $documentId):mixed
     {
         try
         {

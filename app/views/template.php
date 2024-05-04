@@ -33,7 +33,7 @@
                 <!-- 2-nav_icons div P2 -->
                 <div id="choix_site" class="border p-2 d-flex justify-content-around">
                     <?php
-                        include('../app/views/' . $datas['p2_view']);
+                        include('../app/views/p2_base.php');
                     ?>
                 </div>
 

@@ -22,31 +22,16 @@
 
 
   ?>
-  <h2 class="form-title">Ajouter un nouveau document</h2>  
+  <h2 class="form-title">Ajouter un nouveau document à <?= $folderName ?> </h2>  
 
-  <form method="POST" action="add-document" name="myform" id="myform">
-
+  <form method="POST" action="add-document" name="add-document" id="add-document">
+    
     <div class="form-group">
-      <label>Dossier sélectionné :</label>
-      <label><?= $folderName ?></label>
+      <input type="text" id="parentId" name="parentId" value="<?= $folderId ?>" hidden>
+      <input type="text" id="userId" name="userId" value="<?= $_SESSION['user']->getId() ?>" hidden>
+      <input type="text" id="source" name="source" value="<?= $folderSource ?>" hidden>
+      <label for="newDocumentName">Nom :</label>
+      <input name="newDocumentName" id="newDocumentName" > 
+      <input type="submit" name="ajouter" value="Ajouter" title="Ajouter un nouveau document">
     </div>
-      
-    <div class="form-group">
-      <label>user id :</label>
-      <input type="text" id="userId" name="userId" value="<?= $_SESSION['user']->getId() ?>" readonly>
-    </div>
-
-    <div class="form-group">
-      <label>id :</label>
-      <input type="text" id="parentId" name="parentId" value="<?= $folderId ?>" readonly>
-    </div>
-
-    <div class="form-group">
-      <label>Source:</label>
-      <input type="text" id="source" name="source" value="<?= $folderSource ?>" readonly>
-    </div>
-    <input name="newDocumentName" id="newDocumentName" >  
-    <input type="submit" name="ajouter" value="Ajouter" title="Ajouter un nouveau document">
-
-    <textarea name="documentContent" id="documentContent" cols="130" rows="30"></textarea>
   </form>

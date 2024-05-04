@@ -13,7 +13,7 @@ $ulTree = [];
 $stringDocument = '<li class="document"><a href="view?source=%s&id=%d">%s</a></li>';
 $stringFolder = '<li class="folder %s"><input type="checkbox" id="%d"><a href="folders?source=%s&id=%d"<label for="%d">%s</label></a>';
 
-
+# $_SESSION['tree'] depends on nav_choice
 foreach ($_SESSION['tree'] as $item){
     
     $interval = ($item->getRightEdge() - $item->getLeftEdge());

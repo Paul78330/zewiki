@@ -5,12 +5,12 @@
   require_once "../app/models/entities/User.php";
 
   # Get Selected folder info from $_SESSION:
-  $folderSource = $_SESSION['lastSelectedFolderSource'];
+
   $folderId = $_SESSION['lastSelectedFolderId'];
 
   # get selected folder object in array
 
-  foreach ($_SESSION[$folderSource] as $folder)
+  foreach ($_SESSION['tree'] as $folder)
   {
     if($folder->getId()==$folderId)
     {
@@ -19,33 +19,17 @@
       break;
     }
   }
-
-
   ?>
-  <h2 class="form-title">Ajouter un nouveau dossier</h2>  
+  <h2 class="form-title">Ajouter un nouveau dossier a <?= $folderName ?></h2>  
 
-  <form method="POST" action="add-folder" name="myform" id="myform">
-
-    <div class="form-group">
-      <label>Dossier sélectionné :</label>
-      <label><?= $folderName ?></label>
-    </div>
-      
-    <div class="form-group">
-      <label>user id :</label>
-      <input type="text" id="userId" name="userId" value="<?= $_SESSION['user']->getId() ?>" readonly>
-    </div>
+  <form method="POST" action="add-folder" name = "add-folder" id = "add-folder">
 
     <div class="form-group">
-      <label>id :</label>
-      <input type="text" id="parentId" name="parentId" value="<?= $folderId ?>" readonly>
-    </div>
-
-    <div class="form-group">
-      <label>Source:</label>
-      <input type="text" id="source" name="source" value="<?= $folderSource ?>" readonly>
+      <input type="text" id="source" name="source" value="<?= $_SESSION['source'] ?>" hidden>
+      <input type="text" id="userId" name="userId" value="<?= $_SESSION['user']->getId() ?>" hidden>
+      <input type="text" id="parentFolderId" name="parentFolderId" value="<?= $folderId ?>" hidden>
     </div>
 
     <input name="newFolderName" id="newFolderName" >  
-    <input type="submit" name="ajouter" value="Ajouter" title="Ajouter un  nouveau dossier">
+    <input type="submit" name="ajouter" value="Ajouter" title="Ajouter un nouveau dossier">
   </form>

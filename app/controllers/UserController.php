@@ -22,13 +22,15 @@ class UserController extends AbstractController{
         $commonObjectsTree = $this->getObjectsTree('publictree');
 
         # Set datas in $datas array
-        $datas['p2_view'] = 'p2_base.php';
         $datas['p3_view'] = 'p3_base.php';
         $datas['p5_view'] = 'p5_base.php';
 
         # Set tree in $_SESSION
         $_SESSION['tree'] = $commonObjectsTree;
         $_SESSION['source'] = 'common';
+
+        # Set the content to show 
+        $_SESSION['last_p5_view'] = 'p5_base.php';
 
         # add vars to template and call template
         $this->render($datas);
@@ -42,7 +44,6 @@ class UserController extends AbstractController{
         $datas = array();
 
         # Set datas in $datas array
-        $datas['p2_view'] = 'p2_base.php';
         $datas['p3_view'] = 'p3_base.php';
         $datas['p5_view'] = 'p5_connection.php';
 
@@ -67,7 +68,6 @@ class UserController extends AbstractController{
         $datas = array();
 
         # Set datas in $datas array
-        $datas['p2_view'] = 'p2_base.php';
         $datas['p3_view'] = 'p3_base.php';
         $datas['p5_view'] = 'p5_register.php';
 
@@ -148,7 +148,6 @@ class UserController extends AbstractController{
             $commonObjectsTree = $this->getObjectsTree('hometree');
 
             # Set datas in $datas array
-            $datas['p2_view'] = 'p2_base.php';
             $datas['p3_view'] = 'p3_base.php';
             $datas['p5_view'] = 'p5_base.php';
     
@@ -166,7 +165,6 @@ class UserController extends AbstractController{
             $datas = array();
     
             # Set datas in $datas array
-            $datas['p2_view'] = 'p2_base.php';
             $datas['p3_view'] = 'p3_base.php';
             $datas['p5_view'] = 'p5_resetPassword.php';
     
@@ -212,7 +210,6 @@ public function p5_ex_resetPassword()
                     $_SESSION['alert']['message'] = "Une erreur s'est produite lors de l'envoi de l'e-mail, veuillez réessayer ulterieurement. ";
                 }
             }
-            
             else
             {
                 # Saving token failed :
@@ -223,7 +220,6 @@ public function p5_ex_resetPassword()
         {   
             $_SESSION['alert']['message'] = "Adresse e-mail inconnue ";
         }
-    
     }
     # Recall the form
     $this->redirectTo('p5-sf-resetPassword');
@@ -259,7 +255,6 @@ public function p5_ex_resetPassword()
             $_SESSION['token'] = $token;
 
             # Set datas in $datas array
-            $datas['p2_view'] = 'p2_base.php';
             $datas['p3_view'] = 'p3_base.php';
             $datas['p5_view'] = 'p5_newPassword.php';
 
@@ -274,13 +269,11 @@ public function p5_ex_resetPassword()
     public function p5_sf_activeAccount(){
 
         # Set datas in $datas array
-        $datas['p2_view'] = 'p2_base.php';
         $datas['p3_view'] = 'p3_base.php';
         $datas['p5_view'] = 'p5_activeAccount.php';
 
         # add vars to template and call template
         $this->render($datas);    
-
     }
     
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -344,7 +337,6 @@ public function p5_ex_resetPassword()
             $toast = DisplayController::creerRedirectToast("Activation","Un message d'activation vous a été envoyé, cliquez dessus pour activer votre compte puis connectez-vous.",'https://www.zewiki.fr');
 
             # Set datas in $datas array
-            $datas['p2_view'] = 'p2_base.php';
             $datas['p3_view'] = 'p3_base.php';
             $datas['p5_view'] = 'p5_activeAccount.php';
             $datas['toast']  = $toast;
@@ -356,21 +348,7 @@ public function p5_ex_resetPassword()
         {
             $_SESSION['alert']['message'] = "Une erreur s'est produite lors de l'envoi de l'e-mail, veuillez réessayer ulterieurement. ";
             $this->redirectTo("p1-sf-connection");
-        }
-
-
-
-
-
-
-
-
-
-
-
-    
-        
-        
+        }   
     }
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -434,7 +412,6 @@ public function p5_ex_resetPassword()
 
 
             # Set datas in $datas array
-            $datas['p2_view'] = 'p2_base.php';
             $datas['p3_view'] = 'p3_base.php';
             $datas['p5_view'] = 'p5_newPassword.php';
             $datas['toast']  = $toast;
@@ -449,7 +426,6 @@ public function p5_ex_resetPassword()
             $_SESSION['alert']['message']= "Echec de reinitialisation du mot de passe...";
 
             # Set datas in $datas array
-            $datas['p2_view'] = 'p2_base.php';
             $datas['p3_view'] = 'p3_base.php';
             $datas['p5_view'] = 'p5_newPassword.php';
 
@@ -459,62 +435,65 @@ public function p5_ex_resetPassword()
     }
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    public function p1_ex_myAccount(){
-        # Add vars for views
-        $datas = array('title' => 'mon compte');
-
+    public function p1_ex_myAccount()
+    {
         # set content_choice to content_visitor
         $_SESSION['content_choice'] = '5_content_moncompte';
 
         # Set datas in $datas array
-        $datas['p2_view'] = 'p2_base.php';
         $datas['p3_view'] = 'p3_base.php';
         $datas['p5_view'] = 'p5_myAccount.php';
+
+        # Set the content to show 
+        $_SESSION['last_p5_view'] = 'p5_myAccount.php';
 
         # add vars to template and call template
         $this->render($datas);
 
     }
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    public function view(){
+    # Display the selected document in content part
+    public function view($view){
 
         # Get selected documentId
-        $documentId = $_GET['id'];
+        # if not exist 'id' get it from $_SESSION else store it in $_SESSION
+        if(isset($_GET['id']))
+        {
+            $documentId = $_GET['id'];
+            # Set $documentId in $_SESSION for edit view
+            $_SESSION['lastSelectedDocumentId'] = $documentId;
+        }
+        else
+        {
+            $documentId = $_SESSION['lastSelectedDocumentId'];
+        }
 
         # Get document content from database
         $dbmanager = new DatabaseManager;
+
         # Get document_content column from the sql result
-        $content = ($dbmanager->getDocumentById($documentId))['document_content'];
+        $content = ($dbmanager->getDocumentContentById($documentId))['document_content'];
 
         # Set content and ID in $_SESSION
-        $_SESSION['lastDocument']['content']= $content;
-        $_SESSION['lastDocument']['id']= $documentId;
+        //$_SESSION['lastSelectedDocumentContent'] = $content;
+        $_SESSION['lastSelectedDocumentId'] = $documentId;
         $_SESSION['selectedItem'] = 'document';
 
-        # Add vars for views
-        $data = array('title' => 'view ');
+        # Set the last content view in $_SESSIN
+        $_SESSION['last_p5_view'] = '5_content_document.php';
 
-        # Set content_choice to 5_content_document
-        $_SESSION['content_choice'] = '5_content_document';
-        $_SESSION['actions_choice'] = '4_actions_home';
+        # Set datas in $datas array
+        $datas['p3_view'] = 'p3_base.php';
+        $datas['p4_view'] = 'p4_base.php';
+        $datas['p5_view'] = $view;
+        $datas['lastSelectedDocumentContent'] = $content;
+        $datas['lastSelectedDocumentId'] = $documentId;
+   
+        # add vars to template and call template
+        $this->render($datas);
 
-        # add views to viewlist
-        $viewsListe = array('3_folders_liste.php', $_SESSION['actions_choice'] . ".php",$_SESSION['content_choice'].".php");
-        $this->render($viewsListe,$data);
     }
 
-# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    public function showRegister(){
-        # Add vars for views
-        $data = array("title" => "créer un compte");
-
-        # Set content_choice to 5_content_inscription
-        $_SESSION['content_choice'] = '5_content_inscription';
-
-        # add views to viewlist
-        $viewsListe = array('3_folders_liste.php','4_actions_liste.php',$_SESSION['content_choice'].".php");
-        $this->render($viewsListe,$data);
-    }
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public function p5_ex_register()
     {
@@ -569,7 +548,6 @@ public function p5_ex_resetPassword()
                     $toast = DisplayController::creerRedirectToast("Activation","Un message d'activation vous a été envoyé, cliquez dessus pour activer votre compte puis connectez-vous.",'welcome');
 
                     # Set datas in $datas array
-                    $datas['p2_view'] = 'p2_base.php';
                     $datas['p3_view'] = 'p3_base.php';
                     $datas['p5_view'] = 'p5_register.php';
                     # show toast message and redirect to the welcome page (p5_register.php toast datas-)
@@ -606,42 +584,55 @@ public function p5_ex_resetPassword()
     # icon clicked in nav-bar
     public function nav()
     {
-        # get nav choice from url
+        # get nav choice from url (resfresh after delete )
+        if (isset($_GET['choice']))
+        {
+            $choice = $_GET['choice'];
+        }
+        else
+        {
+            $choice = $_SESSION['nav_choice'];
+        }
 
-        switch($_GET['choice']){
+        switch($choice){
             case 'common':
                 $sql_view = 'publictree'; // database view name
-                $treename = "common";
-                $_SESSION['actions_choice']='4_actions_liste';
                 break;
 
             case 'home':
                 $sql_view = 'hometree'; // database view name
-                $treename = "home";
                 # Set actions_choice in $_SESSION
                 $_SESSION['actions_choice']='4_actions_home';
                 break;
 
             case 'shares':
                 $sql_view = 'sharetree'; // database view name
-                $treename = "shares";
                 $_SESSION['actions_choice']='4_actions_liste';
                 break;
         }
 
         # Set nav_choice in $_SESSION
-        $_SESSION['nav_choice']= $_GET['choice'];
+        $_SESSION['nav_choice'] = $choice;
 
-        # set requested tree in $_SESSION
-        $this->getObjectsTree($sql_view,$treename);
+        # Get requested tree from Database
+        $selectedTree = $this->getObjectsTree($sql_view);
 
-        # Add vars for views
-        $data = array("title" => "nav");
+        # Set tree in $_SESSION
+        $_SESSION['tree'] = $selectedTree;
+        $_SESSION['source'] = $choice;
 
-        # add views to viewlist
-        $viewsListe = array('3_folders_liste.php',$_SESSION['actions_choice'] . '.php',$_SESSION['content_choice'] . '.php');
-        $this->render($viewsListe,$data);
-    }
+        # Do not modify the content so show last content
+        $contentToShow = $_SESSION['last_p5_view'];
+
+        # Set datas in $datas array
+        $datas['p3_view'] = 'p3_base.php';
+        $datas['p4_view'] = 'p4_base.php';
+        $datas['p5_view'] = $contentToShow ;
+        
+        
+        # add vars to template and call template
+        $this->render($datas);
+   }
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -684,10 +675,10 @@ public function p5_ex_resetPassword()
     # remove all datas stored $_SESSION
     public function exit(){
         unset($_SESSION['user']);
-        unset($_SESSION['common']);
+        unset($_SESSION['token']);
+        unset($_SESSION['content_choice']);
         unset($_SESSION['alert']);
-        unset($_SESSION['home']);
-        unset($_SESSION['shares']);
+        unset($_SESSION['tree']);
         session_destroy();
         $this->redirectTo("welcome");
     }
@@ -709,44 +700,42 @@ public function p5_ex_resetPassword()
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public function showNewFolderForm(){
         # Clic on new folder button :
-        # Add vars to data
-        $data = array('title' => 'new folder');
 
-        # Add views to viewlist
-            $viewsList = array('3_folders_liste.php',$_SESSION['actions_choice'] . '.php','5_content_new_folder.php');
-            $this->render($viewsList,$data);
+        # Set datas in $datas array
+        $datas['p3_view'] = 'p3_base.php';
+        $datas['p4_view'] = 'p4_base.php';
+        $datas['p5_view'] = '5_content_new_folder.php';
+
+        # add vars to template and call template
+        $this->render($datas);
     }
 
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    public function showEditFolderForm(){
+        # Clic on new folder button :
+
+        # Set datas in $datas array
+        $datas['p3_view'] = 'p3_base.php';
+        $datas['p4_view'] = 'p4_base.php';
+        $datas['p5_view'] = 'p5_editFolder.php';
+
+        # add vars to template and call template
+        $this->render($datas);
+    }
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 public function showNewDocumentForm(){
     # Click on new document button :
-    # Add vars to data
      
     # Set datas in $datas array
-    $datas['p2_view'] = 'p2_base.php';
     $datas['p3_view'] = 'p3_base.php';
     $datas['p4_view'] = 'p4_base.php';
     $datas['p5_view'] = '5_content_new_document.php';
 
-
     # add vars to template and call template
     $this->render($datas);
 
-}
-
-# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-public function showEditDocumentForm(){
-    # Click on edit document button :
-    # Add vars to data
-    $data = array('title' => 'new document');
-    
-    # Set actions_choice
-    $_SESSION['actions_choice'] = '4_actions_home';
-
-    # add views to viewlist
-        $viewsList = array('3_folders_liste.php',$_SESSION['actions_choice'] . '.php','5_content_document_edit.php');
-        $this->render($viewsList,$data);
 }
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -756,11 +745,11 @@ public function showEditDocumentForm(){
         # Get folder id and source from request    
         $id = $_GET['id'];
         $source = $_GET['source'];
+
         # Set last selected folder infos in $_SESSION
         $_SESSION['lastSelectedFolderId']=$id;
         $_SESSION['lastSelectedFolderSource']=$source;
         $_SESSION['selectedItem']='folder';
-   
 
         $_SESSION['nav_choice']=$source;
         # loop on S_SESSION[$source] to find the good object and toggle status
@@ -774,76 +763,115 @@ public function showEditDocumentForm(){
             }
         }
 
-        # Set actions_choices
-        $_SESSION['actions_choice']='4_actions_home';
-
-
         # Create empty var datas array
         $datas = array();
 
         # Get common tree from database (sql publictree view)
         $commonObjectsTree = $this->getObjectsTree('publictree');
 
+        # Do not modify the content so show last content
+        $contentToShow = $_SESSION['last_p5_view'];
+
         # Set datas in $datas array
-        $datas['p2_view'] = 'p2_base.php';
         $datas['p3_view'] = 'p3_base.php';
         $datas['p4_view'] = 'p4_base.php';
-        $datas['p5_view'] = 'p5_base.php';
-
+        $datas['p5_view'] = $contentToShow;
 
         # add vars to template and call template
         $this->render($datas);
     }
 
-
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public function addFolder()
     {
-
-        # add vars to data
-        $data = array('title' => 'success');
-        
         # Clean input from form
         $folderName =  InputController::cleanInput($_POST["newFolderName"]);
-        $parentId = $_POST["parentId"];
+        $parentId = $_POST["parentFolderId"];
         $userId =  $_POST["userId"];
 
         # Verfify all fields exist from form
         if($folderName == false || $parentId == false){
-            $this->redirectTo("showNewFolderForm");
+            $this->redirectTo("show-newfolder-form");
         }
 
         # Verfify field correct from form
         if(InputController::valide_folder_name($folderName) == false){
-            $this->redirectTo("showNewFolderForm");
+            $this->redirectTo("show-newfolder-form");
         }
 
         # Add folder in Database :
         $dbmanager = new DatabaseManager();
         $result = $dbmanager->addItemByParentId($parentId, $folderName,'folder', $userId);
 
+        # Folder added in database
+        if($result)
+        {
+            # Set message, refresh tree nav function with last $_SESSION['nav_choice'], and show the message in p5_message.php
+            $_SESSION['alert']['message'] = "Le dossier a été crée";
+            $_SESSION['last_p5_view'] = 'p5_message.php';
+            $this->nav();
 
-        if($result){
-            # Set content_choice in $_SESSION
-            $_SESSION['content_choice']='5_content_new_folder';
-            $viewsList = array('3_folders_liste.php','4_actions_liste.php',$_SESSION['content_choice'] . '.php');
-            $this->render($viewsList,$data);
+            # Set datas in $datas array
+            $datas['p3_view'] = 'p3_base.php';
+            $datas['p4_view'] = 'p4_base.php';
+            $datas['p5_view'] = 'p5_message.php';
+
+            # add vars to template and call template
+            $this->render($datas);
         }
         else{
-            $this->redirectTo("showNewFolderForm");
+            $this->redirectTo("show-newfolder-form");
         }
     }
+
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    public function renameFolder()
+    {
+        # Clean input from form
+        $folderName =  InputController::cleanInput($_POST["newFolderName"]);
+        $folderId = $_POST["folderId"];
+
+        # Verfify all fields exist from form
+        if($folderName == false){
+            $this->redirectTo("show-editfolder-form");
+        }
+
+        # Verfify field correct from form
+        if(InputController::valide_folder_name($folderName) == false){
+            $this->redirectTo("show-editfolder-form");
+        }
+
+        # fields ok rename folder in database
+        $dbmanager = new DatabaseManager();
+        $renaming = $dbmanager->renameFolder($folderId, $folderName);
+
+        # Rename folder ok
+        if ($renaming)
+        {
+            # Set message, refresh tree nav function with last $_SESSION['nav_choice'], and show the message in p5_message.php
+            $_SESSION['alert']['message'] = "Votre dossier a été renommé";
+            $_SESSION['last_p5_view'] = 'p5_message.php';
+            $this->nav();
+
+
+        }
+        else
+        # Error renaming folder return to form
+        {
+            $this->redirectTo("show-editfolder-form");
+        }
+
+    }
+
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 public function addDocument()
 {
 
-   
-    
     # Clean input from form
     $documentName =  InputController::cleanInput($_POST["newDocumentName"]);
     $parentId = $_POST["parentId"];
     $userId =  $_POST["userId"];
-    $documentContent = $_POST ["documentContent"];
 
     # Verfify all fields exist from form
     if($documentName == false || $parentId == false){
@@ -857,17 +885,14 @@ public function addDocument()
 
     # Add document in Database :
     $dbmanager = new DatabaseManager();
-    $result = $dbmanager->addItemByParentId($parentId, $documentName, 'document', $userId,$documentContent);
+    $result = $dbmanager->addItemByParentId($parentId, $documentName, 'document', $userId);
 
     if($result){
 
-
-        # Set datas in $datas array
-        $datas['p2_view'] = 'p2_base.php';
-        $datas['p3_view'] = 'p3_base.php';
-        $datas['p4_view'] = 'p4_base.php';
-        $datas['p5_view'] = '5_content_new_document.php';
-
+        # Set message, refresh tree nav function with last $_SESSION['nav_choice'], and show the message in p5_message.php
+        $_SESSION['alert']['message'] = "Le document a été ajouté";
+        $_SESSION['last_p5_view'] = 'p5_message.php';
+        $this->nav();
 
         # add vars to template and call template
         $this->render($datas);
@@ -881,9 +906,6 @@ public function addDocument()
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 public function updateDocument()
 {
-
-    # add vars to data
-    $data = array('title' => 'success');
     
     # Clean input from form
     $documentId = $_POST["documentId"];
@@ -894,22 +916,24 @@ public function updateDocument()
         $this->redirectTo("show-editDocument-form");
     }
 
+
     # Update document in Database :
     $dbmanager = new DatabaseManager();
     $result = $dbmanager->updateDocumentById($documentId,$documentContent);
-
+ 
     # if update ok : update document in $_SESSION
     if($result)
     {
-        $_SESSION['lastDocument']['content']= $documentContent;
-        $_SESSION['lastDocument']['id']= $documentId;
+        $_SESSION['lastDocumentcontent']= $documentContent;
+        $_SESSION['lastDocumentId']= $documentId;
 
-        # Set content_choice and actions_choice in $_SESSION
-        $_SESSION['content_choice']='5_content_document';
-        $_SESSION['actions_choice'] = '4_actions_home';
+        # Set datas in $datas array
+        $datas['p3_view'] = 'p3_base.php';
+        $datas['p4_view'] = 'p4_base.php';
+        $datas['p5_view'] = '5_content_document.php';
 
-        $viewsList = array('3_folders_liste.php','4_actions_liste.php',$_SESSION['content_choice'] . '.php');
-        $this->render($viewsList,$data);
+        # add vars to template and call template
+        $this->render($datas);
     }
 
     else{
@@ -918,59 +942,29 @@ public function updateDocument()
 }
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   # Delete the last selected document
     public function deleteDocument()
     {
 
-        # add vars to data
-        $data = array('title' => 'success');
-        
-        # get datas from session
-        $documentId =  $_SESSION['lastDocument']['id'];
-
-        switch($_SESSION['lastSelectedFolderSource']){
-
-            # click on login button
-            case 'home' :
-                $documentSource = $_SESSION['user']->getId();
-                break;
-            case 'common' :
-                $documentSource = 2;
-                break;
-
-            case 'shares' :
-                $documentSource = 3;
-                break;
-        }
-
-        # Verfify all fields exist from form
-        if($documentId == false) {
-            $this->redirectTo("show-editDocument-form");
-        }
-
-        # Delete document in Database :
+       # get $documentId and $documentSource from session
+        $documentId =  $_SESSION['lastSelectedDocumentId'];
+        $documentSource = $_SESSION['lastSelectedFolderSource'];
+ 
+        # Delete document in Database $documentSource needed to update right and left edge from the good tree
         $dbmanager = new DatabaseManager();
         $result = $dbmanager->deleteDocumentById($documentId,$documentSource);
 
         # if delete ok 
         if($result)
         {
-            $_SESSION['lastDocument']['content']= '';
-            $_SESSION['lastDocument']['id']= '';
+            unset($_SESSION['lastDocumentContent']) ;
+            unset($_SESSION['lastDocumentId']);
 
-         
-            # Set content_choice and actions_choice in $_SESSION
-           // $_SESSION['content_choice']='5_content_folder';
-            //$_SESSION['actions_choice'] = '4_actions_home';
+            # Set message, refresh tree nav function with last $_SESSION['nav_choice'], and show the message in p5_message.php
+            $_SESSION['alert']['message'] = "Votre document a été supprimé";
+            $_SESSION['last_p5_view'] = 'p5_message.php';
+            $this->nav();
 
-            //$viewsList = array('3_folders_liste.php','4_actions_liste.php',$_SESSION['content_choice'] . '.php');
-            //$this->render($viewsList,$data);
-            if(isset($_SESSION['lastSelectedFolderSource'])){
-                $choice = $_SESSION['lastSelectedFolderSource'];
-            }
-            else {
-                $choice = 'common';
-            }
-            #$this->redirectToRoute('nav?choice='. $choice);
         }
 
         else{
@@ -981,9 +975,6 @@ public function updateDocument()
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public function deleteFolder()
     {
-
-        # add vars to data
-        $data = array('title' => 'success');
         
         # get datas from session
         $folderId =  $_SESSION['lastSelectedFolderId'];
@@ -1008,34 +999,33 @@ public function updateDocument()
             $this->redirectTo("show-editDocument-form");
         }
 
-  
-        # Delete document in Database :
+          # Delete document in Database :
         $dbmanager = new DatabaseManager();
         $result = $dbmanager->deleteFolderById($folderId,$folderSource);
 
         # if delete ok 
         if($result)
         {
-            $_SESSION['lastSelectedFolderId'] = '';
+            unset($_SESSION['lastSelectedFolderId']);
+            # Set message, refresh tree nav function with last $_SESSION['nav_choice'], and show the message in p5_message.php
+            $_SESSION['alert']['message'] = "Le dossier a été supprimé";
+            $_SESSION['last_p5_view'] = 'p5_message.php';
+            $this->nav();
 
-         
-            # Set content_choice and actions_choice in $_SESSION
-           // $_SESSION['content_choice']='5_content_folder';
-            //$_SESSION['actions_choice'] = '4_actions_home';
+            # Set datas in $datas array
+            $datas['p3_view'] = 'p3_base.php';
+            $datas['p4_view'] = 'p4_base.php';
+            $datas['p5_view'] = 'p5_message.php';
 
-            //$viewsList = array('3_folders_liste.php','4_actions_liste.php',$_SESSION['content_choice'] . '.php');
-            //$this->render($viewsList,$data);
-            if(isset($_SESSION['lastSelectedFolderSource'])){
-                $choice = $_SESSION['lastSelectedFolderSource'];
-            }
-            else {
-                $choice = 'common';
-            }
-            #$this->redirectToRoute('nav?choice='. $choice);
+            # add vars to template and call template
+            $this->render($datas);
         }
 
         else{
-            $this->redirectTo("show-editDocument-form");
+            # Set message, refresh tree nav function with last $_SESSION['nav_choice'], and show the message in p5_message.php
+            $_SESSION['alert']['message'] = "Le dossier n'a pas été supprimé, on ne peut pas supprimer un dossier non vide";
+            $_SESSION['last_p5_view'] = 'p5_message.php';
+            $this->nav();
         }
     }
 

@@ -129,12 +129,17 @@ try{
 
             # Click on document : view the document in content zone ( based on id document)
             case 'view' :
-                $usercontroller->view();
+                $usercontroller->view('5_content_document.php');
                 break;
 
             # Click on add folder button from action list : 
             case 'show-newfolder-form' :
                 $usercontroller->showNewFolderForm();
+                break;
+
+            # Click on edit folder button from action list : 
+            case 'show-editFolder-form' :
+                $usercontroller->showEditFolderForm();
                 break;
 
                 # Click on add document button from action list : 
@@ -144,12 +149,17 @@ try{
 
             # Click on edit document button from action list : 
             case 'show-editDocument-form' :
-                $usercontrolleur->showEditDocumentForm();
+                $usercontroller->view('5_content_document_edit.php');
                 break;
 
             # Click on submit button from content_new_folder : 
             case 'add-folder' :
                 $usercontroller->addFolder();
+                break;
+            
+            # Click on submit button from content_new_folder : 
+            case 'rename-folder' :
+                $usercontroller->renameFolder();
                 break;
    
                 # Click on submit button from content_new_folder : 
