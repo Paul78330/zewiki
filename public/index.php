@@ -188,6 +188,33 @@ try{
                 $usercontroller->deleteFolder();
                 break;
 
+            # Admin part ---------------
+
+            # enable user from admin panel
+            case 'user-enable' :
+                $usercontroller->user_enable();
+                break;
+
+            # disable user from admin panel
+            case 'user-disable' :
+                $usercontroller->user_disable();
+                break;
+
+            # delete user from admin panel
+            case 'user-delete' :
+                $usercontroller->user_delete();
+                break;
+
+            # upgrde user to admin from admin panel
+            case 'user-upgrade' :
+                $usercontroller->user_upgrade();
+                break;
+
+            # downgrade user from admin to user from admin panel
+            case 'user-downgrade' :
+                $usercontroller->user_downgrade();
+                break;
+
             # Unknown page : 404    
             default:
                 throw new Exception("la page n'existe pas");

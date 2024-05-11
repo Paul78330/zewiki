@@ -11,15 +11,19 @@ class TestController extends AbstractController{
     
     public function show(){
 
-        var_dump($_SESSION);
-        die();
+        $databasemanager = new DatabaseManager;
+        $result = $databasemanager->export();
+        if($result)
+        {
+            $message = 'ok';
+        }
 
-        $toast = DisplayController::createAlerte('ca marche');
+
         # Set datas in $datas array
         $datas['p2_view'] = 'p2_base.php';
         $datas['p3_view'] = 'p3_base.php';
-        $datas['p5_view'] = 'p5_messageRedirect.php';
-        $datas['toast']  = $toast;
+        $datas['p5_view'] = 'test.php';
+        $datas['test'] = $message;
 
 
         # add vars to template and call template

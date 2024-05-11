@@ -25,6 +25,4 @@ class AdminController extends AbstractController{
         exit;
     }
 
-
-
 }

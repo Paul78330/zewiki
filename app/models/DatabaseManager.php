@@ -19,6 +19,16 @@ class DatabaseManager{
 # -------------------- Methods --------------------
 
 
+public function export()
+{
+    # Prepared Statements 
+    $statement = $this->pdo->prepare("INSERT INTO logs (log_category, log_level ,log_ip ,log_user, log_message) VALUES (?,?,?,?,?)");
+
+    # Statement execution with params
+    $statement->execute([$category, $level ,$ip, $user, $message ]);
+}
+
+
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # log informations 
     public function logData($category,$level,$message) : bool {
@@ -150,6 +160,37 @@ class DatabaseManager{
         $this->logData('user',1," getUserIdByEmail : email = " . $email. " id retourné = " . $result['user_id'] );
         return $result['user_id'];
     }
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Verify if user is admin
+
+    public function isAdmin($userId):bool
+    {
+        try
+        {
+            # Prepared Statements
+            $statement = $this->pdo->prepare("SELECT user_isadmin FROM users WHERE user_id = ?");
+
+            # Statement execution with params
+            $statement->execute([$userId]);
+            $result = $statement->fetch();
+            if($result['user_isadmin'] == 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch(PDOException $e)
+        {
+            echo "get email user error : " . $e->getMessage();
+            exit();
+        }
+    }
+
+
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # Verify email exists in Database
@@ -413,7 +454,6 @@ class DatabaseManager{
         }
     }
 
-    
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # Delete document by Id from database
     public function deleteDocumentById(int $documentId,$documentSource):bool{
@@ -745,8 +785,262 @@ class DatabaseManager{
             echo "deleteFolderById get right_edge error : " . $e->getMessage();
             return false;
         }
+    }
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Get users list for admin panel
+    public function getUsersList():mixed
+    {
+        try
+        {
+            # Prepared Statement get token
+            $statement = $this->pdo->prepare("SELECT * FROM users");
+            
+            # Statement execution with params
+            $statement->execute();
+            $users = $statement->fetchAll(PDO::FETCH_ASSOC);
+        }
+        catch(PDOException $e)
+        {
+            $this->logData('admin',3,'$e->getMessage()');
+            exit();
+        }
+        return $users;
+
+    }
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Get logs list for admin panel
+    public function getLogsList()
+    {
+        try
+        {
+            # Prepared Statement get token
+            $statement = $this->pdo->prepare("SELECT * FROM logs");
+            
+            # Statement execution with params
+            $statement->execute();
+            $logs = $statement->fetchAll(PDO::FETCH_ASSOC);
+        }
+        catch(PDOException $e)
+        {
+            $this->logData('admin',3,'$e->getMessage()');
+            exit();
+
+        }
+        return $logs;
+
+    }
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Get tokens list for admin panel
+    public function getTokensList()
+    {
+        try
+        {
+            # Prepared Statement get token
+            $statement = $this->pdo->prepare("SELECT * FROM tokens");
+            
+            # Statement execution with params
+            $statement->execute();
+            $tokens = $statement->fetchAll(PDO::FETCH_ASSOC);
+        }
+        catch(PDOException $e)
+        {
+            $this->logData('admin',3,'$e->getMessage()');
+            exit();
+        }
+        return $tokens;
+
+    }
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Disable account from admin panel
+    public function user_disable($id):bool
+    {
+        # Verify if request is from admin user 
+        $adminUser = $_SESSION['user']->getId();
+        if ($this->isAdmin($adminUser))
+        # User is admin 
+        {
+            try
+            {
+                $statement = $this->pdo->prepare("UPDATE users set is_active = 0 where user_id = ?");
+                $result = $statement->execute([$id]);
+                if($result)
+                {
+                    $this->logData('admin',1,"désactivation du compte" . $id );
+                    return true;
+                }
+    
+            }
+            catch(PDOException $e)
+            {
+                $this->logData('admin',3,'$e->getMessage()');
+                return false;
+                exit();
+            }
+
+        }
+        else
+        {
+            $this->logData('admin',1,"demande de désactivation d'un compte depuis un compte non admin");
+            return false;
+        }
+    }
+
+    # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Enable account from admin panel
+    public function user_enable($id):bool
+    {
+        # Verify if request is from admin user 
+        $adminUser = $_SESSION['user']->getId();
+        if ($this->isAdmin($adminUser))
+        # User is admin 
+        {
+            try
+            {
+                $statement = $this->pdo->prepare("UPDATE users set is_active = 1 where user_id = ?");
+                $result = $statement->execute([$id]);
+                if($result)
+                {
+                    $this->logData('admin',1,"activation du compte" . $id );
+                    return true;
+                }
+    
+            }
+            catch(PDOException $e)
+            {
+                $this->logData('admin',3,'$e->getMessage()');
+                return false;
+                exit();
+            }
+
+        }
+        else
+        {
+            $this->logData('admin',1,"demande d'activation d'un compte depuis un compte non admin");
+            return false;
+        }
+    }
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Enable account from admin panel
+    public function user_downgrade($id):bool
+    {
+        # Verify if request is from admin user 
+        $adminUser = $_SESSION['user']->getId();
+        if ($this->isAdmin($adminUser))
+        # User is admin 
+        {
+            try
+            {
+                $statement = $this->pdo->prepare("UPDATE users set user_isadmin = 0 where user_id = ?");
+                $result = $statement->execute([$id]);
+                if($result)
+                {
+                    $this->logData('admin',1,"downgrade du compte" . $id );
+                    return true;
+                }
+    
+            }
+            catch(PDOException $e)
+            {
+                $this->logData('admin',3,'$e->getMessage()');
+                return false;
+                exit();
+            }
+
+        }
+        else
+        {
+            $this->logData('admin',1,"demande de downgrade d'un compte depuis un compte non admin");
+            return false;
+        }
+    }
 
 
+    # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Enable account from admin panel
+    public function user_upgrade($id):bool
+    {
+        # Verify if request is from admin user 
+        $adminUser = $_SESSION['user']->getId();
+        if ($this->isAdmin($adminUser))
+        # User is admin 
+        {
+            try
+            {
+                $statement = $this->pdo->prepare("UPDATE users set user_isadmin = 1 where user_id = ?");
+                $result = $statement->execute([$id]);
+                if($result)
+                {
+                    $this->logData('admin',1,"upgrade du compte" . $id );
+                    return true;
+                }
+    
+            }
+            catch(PDOException $e)
+            {
+                $this->logData('admin',3,'$e->getMessage()');
+                return false;
+                exit();
+            }
+
+        }
+        else
+        {
+            $this->logData('admin',1,"demande d'upgrade d'un compte depuis un compte non admin");
+            return false;
+        }
+    }
+
+        # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Delete account from admin panel
+    public function user_delete($id):bool
+    {
+        # Verify if request is from admin user 
+        $adminUser = $_SESSION['user']->getId();
+        if ($this->isAdmin($adminUser))
+        # User is admin 
+        {
+            try
+            {   
+                # Beginning the transaction all ok or none
+                $this->pdo->beginTransaction();
+
+                # Delete all folders for the selected user
+                $statement = $this->pdo->prepare("DELETE FROM folders where user_id = ?");
+                $result = $statement->execute([$id]);
+
+                # Delete all documents for the selected user
+                $statement = $this->pdo->prepare("DELETE FROM documents where user_id = ?");
+                $result = $statement->execute([$id]);
+
+                # Delete user account
+                $statement = $this->pdo->prepare("DELETE FROM users where user_id = ?");
+                $result = $statement->execute([$id]);
+
+                # All ok -> commit
+                $this->pdo->commit();
+
+    
+            }
+            catch(PDOException $e)
+            {
+                $this->logData('admin',3,'$e->getMessage()');
+                return false;
+                exit();
+            }
+            
+            return true;
+
+        }
+        else
+        {
+            $this->logData('admin',1,"demande de suppression d'un compte depuis un compte non admin");
+            return false;
+        }
     }
 
 }

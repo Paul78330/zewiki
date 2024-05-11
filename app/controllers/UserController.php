@@ -410,7 +410,6 @@ public function p5_ex_resetPassword()
             # Create toast message : 
             $toast = DisplayController::creerRedirectToast("Mot de passe","Le nouveau mot de passe à été modifié, vous allez être redirigé vers la page de connexion",'p1-sf-connection');
 
-
             # Set datas in $datas array
             $datas['p3_view'] = 'p3_base.php';
             $datas['p5_view'] = 'p5_newPassword.php';
@@ -601,13 +600,16 @@ public function p5_ex_resetPassword()
 
             case 'home':
                 $sql_view = 'hometree'; // database view name
-                # Set actions_choice in $_SESSION
-                $_SESSION['actions_choice']='4_actions_home';
                 break;
 
             case 'shares':
                 $sql_view = 'sharetree'; // database view name
-                $_SESSION['actions_choice']='4_actions_liste';
+                break;
+
+            case 'admin':
+                $sql_view = 'hometree'; // database view name
+                $this->show_admin_panel();
+                exit();
                 break;
         }
 
@@ -617,12 +619,12 @@ public function p5_ex_resetPassword()
         # Get requested tree from Database
         $selectedTree = $this->getObjectsTree($sql_view);
 
+        # Do not modify the content so show last content
+        $contentToShow = $_SESSION['last_p5_view'];
+
         # Set tree in $_SESSION
         $_SESSION['tree'] = $selectedTree;
         $_SESSION['source'] = $choice;
-
-        # Do not modify the content so show last content
-        $contentToShow = $_SESSION['last_p5_view'];
 
         # Set datas in $datas array
         $datas['p3_view'] = 'p3_base.php';
@@ -685,6 +687,7 @@ public function p5_ex_resetPassword()
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public static function isSessionAdmin():bool{
+   
         if(!isset($_SESSION['user'])){
             # User not connected
             return false;
@@ -810,14 +813,6 @@ public function showNewDocumentForm(){
             $_SESSION['alert']['message'] = "Le dossier a été crée";
             $_SESSION['last_p5_view'] = 'p5_message.php';
             $this->nav();
-
-            # Set datas in $datas array
-            $datas['p3_view'] = 'p3_base.php';
-            $datas['p4_view'] = 'p4_base.php';
-            $datas['p5_view'] = 'p5_message.php';
-
-            # add vars to template and call template
-            $this->render($datas);
         }
         else{
             $this->redirectTo("show-newfolder-form");
@@ -853,8 +848,6 @@ public function showNewDocumentForm(){
             $_SESSION['alert']['message'] = "Votre dossier a été renommé";
             $_SESSION['last_p5_view'] = 'p5_message.php';
             $this->nav();
-
-
         }
         else
         # Error renaming folder return to form
@@ -893,9 +886,6 @@ public function addDocument()
         $_SESSION['alert']['message'] = "Le document a été ajouté";
         $_SESSION['last_p5_view'] = 'p5_message.php';
         $this->nav();
-
-        # add vars to template and call template
-        $this->render($datas);
 
     }
     else{
@@ -1029,8 +1019,117 @@ public function updateDocument()
         }
     }
 
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    
+   # clique on 'administration' button from nav-bar
+    public function show_admin_panel()
+    {
+        $databasemanager = new DatabaseManager;
 
-   
+        # get datas from database (users, logs and tokens)
+        $users = $databasemanager->getUsersList();
+        $logs = $databasemanager->getLogsList();
+        $tokens = $databasemanager->getTokensList();
+
+        
+        # Set datas in $datas array
+        $datas['p3_view'] = 'p3_base.php';
+        $datas['p4_view'] = 'p4_base.php';
+        $datas['p5_view'] = '5_content_admin.php';
+        $datas['users'] = $users;
+        $datas['logs'] = $logs;
+        $datas['tokens'] = $tokens;
+
+        # add vars to template and call template
+        $this->render($datas);
+
+    }
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Enable user from admin panel
+    public function user_enable()
+    {
+        # Get token from url
+        $id = $_GET['id'];
+
+        $databasemanager = new DatabaseManager;
+        $enable = $databasemanager->user_enable($id);
+        if($enable)
+        {
+            $this->show_admin_panel();
+        }
+
+    }
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Disable user from admin panel-------
+    public function user_disable()
+    {
+        # Get token from url
+        $id = $_GET['id'];
+
+        $databasemanager = new DatabaseManager;
+        $disable = $databasemanager->user_disable($id);
+        if($disable)
+        {
+            $this->show_admin_panel();
+        }
+    }
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Delete user from admin panel
+    public function user_delete()
+    {
+        # Get token from url
+        $id = $_GET['id'];
+
+        $databasemanager = new DatabaseManager;
+        $databasemanager->user_delete($id);
+
+        $databasemanager = new DatabaseManager;
+        $delete = $databasemanager->user_delete($id);
+        
+        if($delete)
+        {
+            $this->show_admin_panel();
+        }
+
+
+    }
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # User upgrade to admin from admin panel
+    public function user_upgrade()
+    {
+        # Get token from url
+        $id = $_GET['id'];
+
+        $databasemanager = new DatabaseManager;
+        $upgrade = $databasemanager->user_upgrade($id);
+        
+        if($upgrade)
+        {
+            $this->show_admin_panel();
+        }
+
+    }
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Admin downgrade to user from admin panel
+    public function user_downgrade()
+    {
+        # Get token from url
+        $id = $_GET['id'];
+
+        $databasemanager = new DatabaseManager;
+        $downgrade = $databasemanager->user_downgrade($id);
+
+        if($downgrade)
+        {
+            $this->show_admin_panel();
+        }
+
+    }
+
+
 }
