@@ -17,10 +17,6 @@
                 echo "<a class='nav-link mx-2' href='p1-ex-disconnect' data-toggle='tooltip' title='Déconnexion' ><img src ='" . DOSSIER_ICONES . "p1_disconnect.png' width=25></a>"; 
             echo '</li>';
 
-            echo '<li class="nav-item">';
-                echo "<a class='nav-link mx-2' href='p1-sf-settings' data-toggle='tooltip' title='Paramètres' ><img src ='" . DOSSIER_ICONES . "p1_settings.png' width=25></a>";   
-            echo '</li>';
-
         }        
         else
         {

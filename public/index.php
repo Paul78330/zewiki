@@ -86,12 +86,6 @@ try{
                 $usercontroller->newPassword();
             break;
 
-
-            # Click on register button
-            case 'showRegister' :
-                $usercontroller->showRegister();
-                break;
-
             # Click on 'Inscription' button from p5-register.php form
             case 'p5-register' :
                 $usercontroller->p5_ex_register();
