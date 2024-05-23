@@ -436,9 +436,6 @@ public function p5_ex_resetPassword()
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public function p1_ex_myAccount()
     {
-        # set content_choice to content_visitor
-        $_SESSION['content_choice'] = '5_content_moncompte';
-
         # Set datas in $datas array
         $datas['p3_view'] = 'p3_base.php';
         $datas['p5_view'] = 'p5_myAccount.php';
@@ -448,7 +445,6 @@ public function p5_ex_resetPassword()
 
         # add vars to template and call template
         $this->render($datas);
-
     }
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # Display the selected document in content part

@@ -199,7 +199,7 @@ try{
                 $usercontroller->user_delete();
                 break;
 
-            # upgrde user to admin from admin panel
+            # upgrade user to admin from admin panel
             case 'user-upgrade' :
                 $usercontroller->user_upgrade();
                 break;
