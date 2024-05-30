@@ -1,10 +1,5 @@
 <?php
 
-    # logo
-    echo "<a class='navbar-brand' href='www.zewiki.fr'><img src ='" . DOSSIER_ICONES . "zewiki.svg' width=75></a>";
-
-    echo '<ul class="navbar-nav ms-auto ">';
-
         # Verify if user is connected
         if ($connected)
         {
@@ -29,5 +24,3 @@
                 echo "<a class='nav-link mx-2' href='p1-sf-connection' data-toggle='tooltip' title='Connexion' ><img src ='" . DOSSIER_ICONES . "p1_connexion.png' width=25></a>"; 
             echo '</li>';
         }
-
-    echo '</ul>';

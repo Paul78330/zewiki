@@ -1,3 +1,14 @@
+/* couleur de fond de la barre de navigation*/
+nav{
+  background-color: gainsboro;
+}
+/* curseur personnalisé de la div qui sépare les deux panneaux */
+#separator{
+    cursor: col-resize;
+    border: 5px solid black;
+    width: 2px;
+}
+
 /* style spécifique a la liste des dossiers */
 
 #folders_list{

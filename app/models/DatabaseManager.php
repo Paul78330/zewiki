@@ -12,21 +12,12 @@ class DatabaseManager{
 
 # -------------------- Constructor --------------------
     public function __construct() {
-        $this->pdo = new PDO("mysql:host=192.168.0.50;dbname=zewiki;charset=utf8;port=3306", "zewikiphpuser","zepdfife85*-zd");
+        $this->pdo = new PDO("mysql:host=127.0.0.1;dbname=zewiki;charset=utf8;port=3306", "zewikiphpuser","zepdfife85*-zd");
+        // change en 192.168.0.50 avant git pull
     }
 
 
 # -------------------- Methods --------------------
-
-
-public function export()
-{
-    # Prepared Statements 
-    $statement = $this->pdo->prepare("INSERT INTO logs (log_category, log_level ,log_ip ,log_user, log_message) VALUES (?,?,?,?,?)");
-
-    # Statement execution with params
-    $statement->execute([$category, $level ,$ip, $user, $message ]);
-}
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -829,7 +820,6 @@ public function export()
 
         }
         return $logs;
-
     }
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

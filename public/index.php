@@ -15,7 +15,6 @@ define('VIEWS_PATH','../app/views/');
 # Appels des différents controleurs nécessaires au routeur
 
 $usercontroller = new UserController();
-$test = new TestController();
 $admin = new AdminController();
 
 
