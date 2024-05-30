@@ -2,7 +2,7 @@
 
 <form action="p5-ex-activeAccount" method="POST" id="p5-ex-activeAccount">
   
-<div class="form-outline mb-4">
+<div class="form-outline mb-4 b.bg-gainsboro">
     <label class="form-label" for="email">Adresse e-mail</label>
     <input type="email" id="email" name="email" class="form-control" required />
   </div>

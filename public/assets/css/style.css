@@ -2,6 +2,10 @@
 nav{
   background-color: gainsboro;
 }
+
+.bg-bleu1{
+  background-color: rgba(110, 142, 185, 0.541);
+}
 /* curseur personnalisé de la div qui sépare les deux panneaux */
 #separator{
     cursor: col-resize;
@@ -56,7 +60,6 @@ label:hover{
 .empty::before{
   content: 	'\01F4C1';
 }
-
 
 .open::before{
   content: 	'\01F892 \01F4C2';

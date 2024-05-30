@@ -1,0 +1,5 @@
+host=localhost
+dbname=zewiki
+port=3306
+user=zewikiphpuser
+password=zepdfife85*-zd

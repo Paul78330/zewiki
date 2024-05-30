@@ -12,7 +12,21 @@ class DatabaseManager{
 
 # -------------------- Constructor --------------------
     public function __construct() {
-        $this->pdo = new PDO("mysql:host=192.168.0.50;dbname=zewiki;charset=utf8;port=3306", "zewikiphpuser","zepdfife85*-zd");
+
+        // get information from configuration file
+        $lignes = explode("\n", file_get_contents('../app/configuration.txt'));
+        $config = [];
+
+        // loop to get line information
+        foreach ($lignes as $ligne) {
+            // extract params and value
+            $conf = explode('=', $ligne);           
+            // Store key value in the array
+            $config[$conf[0]] = trim($conf[1]);
+        }
+    
+
+    $this->pdo = new PDO("mysql:host=$config[host];dbname=$config[dbname];charset=utf8;port=$config[port]", $config['user'],$config['password']);
         // change en 192.168.0.50 avant git pull
     }
 

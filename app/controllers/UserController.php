@@ -35,7 +35,6 @@ class UserController extends AbstractController{
         # add vars to template and call template
         $this->render($datas);
     }
-
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # User clicked on connection button to login (sf = show form)
     public function p1_sf_connection()

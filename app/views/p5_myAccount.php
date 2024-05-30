@@ -6,7 +6,7 @@
 
 ?>
   <div class="container-fluid mt--7">
-    <div class="card bg-primary shadow">
+    <div class="card bg-bleu1 shadow">
       <div class="card-body">
         <form>
           <div class="pl-lg-4">
