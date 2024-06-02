@@ -6,7 +6,7 @@
       <input type="text" id="folderId" name="folderId" value="<?= $datas['lastSelectedFolderId'] ?>" hidden>
       <input type="text" id="folderName" name="folderName" value="">
     </div>
-
+    <input type="text" id="token" name="token" value="<?= $datas['token'] ?>" hidden>
     <input type="submit" name="enregistrer" value="enregistrer" title="Enregistrer le dossier">
 
     

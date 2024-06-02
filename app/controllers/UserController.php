@@ -12,11 +12,35 @@ class UserController extends AbstractController{
 
 ##-------------------- Methods ------------------------------------------------------------------------------------------------------------------------------------------
 
+    # CSRF token creation 
+    public function createCSRFToken()
+    {
+        $token = bin2hex(random_bytes(32));
+        $_SESSION['CSRFToken'] = $token;
+    }
+
+        # CSRF token validation 
+        public function isValideCSRFToken($tokenToValidate)
+        {
+            $token = $_SESSION['CSRFToken'];
+            if ($token == $tokenToValidate)
+            {
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+
+
     # Default user page (not connected user)
     public function welcome()
     {
         # Create empty var datas array
         $datas = array();
+
+        # Create a CSRFToken stored in $_SESSION[CRSFToken]
+        $this->createCSRFToken();
 
         # Get common tree from database (sql publictree view)
         $commonObjectsTree = $this->getObjectsTree('publictree');
@@ -133,6 +157,9 @@ class UserController extends AbstractController{
     }
     else {  
             # Authentication ok :
+
+            # Update CSRFToken
+            $this->createCSRFToken();
 
             # Store user datas in $_SESSION
             $databasemanager->getUserDatas($email);
@@ -447,7 +474,8 @@ public function p5_ex_resetPassword()
     }
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # Display the selected document in content part
-    public function view($view){
+    public function view($view)
+    {
 
         # Get selected documentId
         # if not exist 'id' get it from $_SESSION else store it in $_SESSION
@@ -673,6 +701,7 @@ public function p5_ex_resetPassword()
     public function exit(){
         unset($_SESSION['user']);
         unset($_SESSION['token']);
+        unset($_SESSION['CRSFToken']);
         unset($_SESSION['content_choice']);
         unset($_SESSION['alert']);
         unset($_SESSION['tree']);

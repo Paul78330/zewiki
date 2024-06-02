@@ -15,16 +15,30 @@ class MailsController
     // Créer une nouvelle instance de PHPMailer
     $mail = new PHPMailer(true);
 
+    // get information from configuration file
+    $lignes = explode("\n", file_get_contents('../app/configuration.txt'));
+    $config = [];
+
+    // loop to get line information
+    foreach ($lignes as $ligne)
+    {
+        // extract params and value
+        $conf = explode('=', $ligne);           
+        // Store key value in the array
+        $config[$conf[0]] = trim($conf[1]);
+    }
+    // var_dump($config);
+    // die();
         try 
         {
             // Configuration du serveur SMTP
             $mail->isSMTP();
-            $mail->Host = 'smtp.ionos.fr';
+            $mail->Host = $config['mailHost'];
             $mail->SMTPAuth = true;
-            $mail->Username = 'auto@zewiki.fr';
-            $mail->Password = 'G4xuAlPNhgSbTa8GfNZ0@2';
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
+            $mail->Username = $config['mailUsername'];
+            $mail->Password = $config['mailPassword'];
+            $mail->SMTPSecure = $config['SMTPSecure'];
+            $mail->Port = $config['mailPort'];
 
             // Destinataire et expéditeur
             $mail->setFrom('auto@zewiki.fr', ' Zewiki mail agent');
